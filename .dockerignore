@@ -1,0 +1,5 @@
+npm_modules
+client/npm_modules
+client/build
+*.log
+.git
