@@ -11,6 +11,6 @@
   },
   "scripts": {
     "start": "node index.js",
-    "dev": "concurrently \"nodemon src/index.js\" \"cd client && npm run start\"" 
+    "dev": "concurrently \"nodemon src/index.js\" \"cd client && npm run start\""
   }
 }

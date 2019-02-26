@@ -8,7 +8,9 @@ export default class App extends React.Component {
         console.log(props);
         this.state={url:props.url,headerKey:null,
             headerValue:null,response:'',
-            mock_sleep:0,no_of_request:1
+           mock_sleep:0,no_of_request:1,
+           max_wait:5000,mode:'chain'
+        
         }   ;
         
     }
@@ -21,11 +23,12 @@ export default class App extends React.Component {
 
     onSubmit=(e)=>{
         e.preventDefault();
-        const{url,headerKey,headerValue,mock_sleep,no_of_request}=this.state;
+        this.setState({response:'Sending...'})
+        const{url,headerKey,headerValue,mock_sleep,no_of_request,mode,max_wait}=this.state;
         console.log('url:'+url)
         console.log({url,headerKey,headerValue,mock_sleep,no_of_request})
 
-        axios.post('/api/sendPost',{url,headerKey,headerValue,mock_sleep,no_of_request})
+        axios.post('/api/sendPost',{url,headerKey,headerValue,mock_sleep,no_of_request,mode,max_wait},{timeout:max_wait+300})
         .then((result)=>{
             console.log(result)
             this.setState({response:JSON.stringify( result.data)});
@@ -44,10 +47,23 @@ export default class App extends React.Component {
             <form className="ui form">
                 <div className="field">
                     <label>URL</label>
-                    <input type="text" name="url" placeholder="URL" value={this.state.url} onChange={this.onChange}/>
+                    <input type="text" name="url" placeholder="URL" value={this.state.url}  onChange={this.onChange}/>
                 </div>
-                
-                <div className="two fields">
+                <div className="field">
+                    <div className="ui radio checkbox">
+                        <input type="radio" onChange={this.onChange}   name="mode"   tabIndex="0" value="chain" checked={this.state.mode === 'chain'} />
+                        <label>Chain</label>
+                    </div>
+                </div>
+                <div className="field">
+                    <div className="ui radio checkbox">
+                        <input type="radio" onChange={this.onChange}  name="mode"   tabIndex="1" value="fanout" checked={this.state.mode === 'fanout'} />
+                        <label>FanOut</label>
+                    </div>
+                </div>
+               
+                {/* <div className="two fields"> */}
+                <div className="hide">
                     <div className="field">
                         <label>Header</label>
                         <input type="text" name="headerKey" placeholder="header" onChange={this.onChange} />
@@ -57,6 +73,10 @@ export default class App extends React.Component {
                         <input type="text" name="headerValue" placeholder="header value" onChange={this.onChange}/>
 
                     </div>
+                </div>
+                <div className="field">
+                    <label>Connection Timeout(ms)  Each node will decrease 300ms (5000,4700,4300...)</label>
+                    <input type="text" name="max_wait" placeholder="Wait wait time " value={this.state.max_wait} onChange={this.onChange}/>
                 </div>
                 
                 <div className="field">
@@ -74,6 +94,19 @@ export default class App extends React.Component {
                 
             </div>
             <textarea value={this.state.response} readOnly={true} rows="20"  cols="80" />
+
+
+            <div className="term">
+            
+            This Web application is owned and maintained by TRUE Corporation. 
+The purposes of this Web application are to be the source and provider of various testing application regarding the companies.
+
+Copyright in all the information, photos, texts, advertising media, docker images and other components on this Website, e.g., trademarks, logos, 
+service marks and trade names contained in this Website, are owned by the TRUE Corporation and its affiliates. 
+No part of these materials may be copied, modified, 
+transmitted, distributed or disclosed in any way to public or for commercial purposes without prior written consent of the company and/or its affiliate, 
+as the case may be.
+            </div>
         </div>
 
     )}
